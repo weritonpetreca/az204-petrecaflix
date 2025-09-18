@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>APIs FlixPetreca</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            background: #f5f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+            margin-bottom: 32px;
+        }
+        .cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            justify-content: center;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 20px 16px;
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            transition: box-shadow 0.2s;
+        }
+        .card:hover {
+            box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+        }
+        .card-thumb {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            background: #eee;
+        }
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: #1976d2;
+            margin-bottom: 8px;
+        }
+        .card-link {
+            margin-top: auto;
+            text-decoration: none;
+            color: #fff;
+            background: #1976d2;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+            display: inline-block;
+        }
+        .card-link:hover {
+            background: #125ea8;
+        }
+        @media (max-width: 700px) {
+            .cards {
+                flex-direction: column;
+                align-items: center;
+            }
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Filmes FlixPetreca</h1>
+        <div class="cards" id="movies-list">
+            <!-- Cards serão inseridos aqui via JS -->
+        </div>
+    </div>
+    <script>
+        // Substitua a URL base conforme necessário para seu ambiente local ou produção
+        const API_BASE = 'http://localhost:7001/api';
+
+        async function fetchMovies() {
+            try {
+                const res = await fetch(`${API_BASE}/all`);
+                const movies = await res.json();
+
+                // Estrutura esperada do CosmosDB: [{ id, title, thumb, video, ... }]
+                return movies;
+            } catch (e) {
+                console.error('Erro ao buscar filmes:', e);
+                return [];
+            }
+        }
+
+        async function renderMovies() {
+            const moviesList = document.getElementById('movies-list');
+            moviesList.innerHTML = '<p>Carregando filmes...</p>';
+
+            const movies = await fetchMovies() || [];
+            moviesList.innerHTML = '';
+
+            // Exibe apenas os dois primeiros filmes
+            for (let i = 0; i < Math.min(2, movies.length); i++) {
+                const movie = movies[i];
+
+                const card = document.createElement('div');
+                card.className = 'card';
+
+                const thumb = document.createElement('img');
+                thumb.className = 'card-thumb';
+                thumb.src = movie.thumb || 'https://via.placeholder.com/320x180?text=Sem+Thumbnail';
+                thumb.alt = `Thumbnail de ${movie.title}`;
+
+                const title = document.createElement('div');
+                title.className = 'card-title';
+                title.textContent = movie.title;
+
+                const link = document.createElement('a');
+                link.className = 'card-link';
+                link.href = movie.video || '#';
+                link.target = '_blank';
+                link.rel = 'noopener';
+                link.textContent = 'Assistir';
+
+                card.appendChild(thumb);
+                card.appendChild(title);
+                card.appendChild(link);
+
+                moviesList.appendChild(card);
+            }
+        }
+
+        renderMovies();
+    </script>
+</body>
+</html>
