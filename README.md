@@ -1,6 +1,6 @@
-# Flixpetreca
+# PetrecaFlix
 
-O Flixpetreca é uma aplicação baseada em arquitetura serverless utilizando Azure Functions para gerenciar um catálogo de filmes.
+O PetrecaFlix é uma aplicação baseada em arquitetura serverless utilizando Azure Functions para gerenciar um catálogo de filmes.
 
 ## Visão Geral
 
